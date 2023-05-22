@@ -8,8 +8,10 @@ from utils import plot_training, n_p, get_count
 from train import train_model, get_metrics
 from pipeline import get_study_level_data, get_dataloaders
 
-# #### load study level dict data
-study_data = get_study_level_data(study_type='XR_WRIST')
+# #### load all studies
+studies = ['XR_ELBOW', 'XR_FINGER', 'XR_FOREARM', 'XR_HAND',
+           'XR_HUMERUS', 'XR_SHOULDER', 'XR_WRIST']
+study_data = get_study_level_data(studies=studies)
 
 # #### Create dataloaders pipeline
 data_cat = ['train', 'valid'] # data categories
