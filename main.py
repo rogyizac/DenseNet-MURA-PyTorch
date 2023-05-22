@@ -15,7 +15,7 @@ study_data = get_study_level_data(studies=studies)
 
 # #### Create dataloaders pipeline
 data_cat = ['train', 'valid'] # data categories
-dataloaders = get_dataloaders(study_data, batch_size=1)
+dataloaders = get_dataloaders(study_data, batch_size=8)
 dataset_sizes = {x: len(study_data[x]) for x in data_cat}
 
 # #### Build model
