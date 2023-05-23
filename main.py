@@ -37,9 +37,10 @@ class Loss(torch.nn.modules.Module):
         super(Loss, self).__init__()
         self.Wt1 = Wt1
         self.Wt0 = Wt0
-        
+
     def forward(self, inputs, targets, phase):
-        loss = - (self.Wt1[phase] * targets * inputs.log() + self.Wt0[phase] * (1 - targets) * (1 - inputs).log())
+        loss = torch.nn.functional.binary_cross_entropy(inputs, targets,
+                                                        weight=(self.Wt1[phase] * targets + self.Wt0[phase] * (1 - targets)))
         return loss
 
 model = densenet169(pretrained=True)
@@ -50,7 +51,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=1, verbose=True)
 
 # #### Train model
-model = train_model(model, criterion, optimizer, dataloaders, scheduler, dataset_sizes, num_epochs=5)
+model = train_model(model, criterion, optimizer, dataloaders, scheduler, dataset_sizes, num_epochs=10)
 
 torch.save(model.state_dict(), 'models/model.pth')
 

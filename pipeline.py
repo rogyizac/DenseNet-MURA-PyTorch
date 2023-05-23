@@ -22,7 +22,7 @@ def get_study_level_data(studies):
         study_data[phase] = pd.DataFrame(columns=['Path', 'Count', 'Label'])
         i = 0
         for study_type in studies:
-            BASE_DIR = '../MURA-v1.1/%s/%s/' % (phase, study_type)
+            BASE_DIR = '/data0/NIH-CXR14/images/MURA/MURA-v1.1/%s/%s/' % (phase, study_type)
             patients = list(os.walk(BASE_DIR))[0][1] # list of patient folder names        
             for patient in tqdm(patients): # for each patient folder
                 for study in os.listdir(BASE_DIR + patient): # for each study in that patient folder
@@ -56,6 +56,7 @@ class ImageDataset(Dataset):
         if self.transform is not None:
             image = self.transform(image)
         label = self.df.iloc[idx, 2]
+        label = torch.tensor(label)
         return image, label
 
 def get_dataloaders(data, batch_size=8, study_level=False):
