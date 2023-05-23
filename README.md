@@ -1,3 +1,25 @@
+Forked from the original pyaf/DenseNet-MURA-PyTorch repo
+
+Modifications made,
+- This repo is modified to create a single model pth file for all modalities ('XR_ELBOW', 'XR_FINGER', 'XR_FOREARM', 'XR_HAND',
+           'XR_HUMERUS', 'XR_SHOULDER', 'XR_WRIST')
+- modified to use confusion_matrix from the sklearn package rather than torchnet (torchnet was causing random issues)
+- Batch size can be changed
+- Used binary cross entropy (suggested from this closed issue https://github.com/pyaf/DenseNet-MURA-PyTorch/issues/8) 
+- Model file included
+
+I trained with 10 epochs on the entire MURA dataset,
+
+train Loss: 0.0291 Acc: 0.7799
+Confusion Matrix:
+ [[18654  3281]
+ [ 4820 10053]]
+ 
+ valid Loss: 0.0298 Acc: 0.7748
+Confusion Matrix:
+ [[1414  253]
+ [ 467 1063]]
+
 # DenseNet on MURA Dataset using PyTorch
 
 A PyTorch implementation of 169 layer [DenseNet](https://arxiv.org/abs/1608.06993) model on MURA dataset, inspired from the paper [arXiv:1712.06957v3](https://arxiv.org/abs/1712.06957) by Pranav Rajpurkar et al. MURA is a large dataset of musculoskeletal radiographs, where each study is manually labeled by radiologists as either normal or abnormal. [know more](https://stanfordmlgroup.github.io/projects/mura/)
