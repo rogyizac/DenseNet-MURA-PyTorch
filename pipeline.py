@@ -22,15 +22,16 @@ def get_study_level_data(studies):
         study_data[phase] = pd.DataFrame(columns=['Path', 'Count', 'Label'])
         i = 0
         for study_type in studies:
-            BASE_DIR = '../MURA-v1.1/%s/%s/' % (phase, study_type)
+            BASE_DIR = '/data0/NIH-CXR14/images/MURA/MURA-v1.1/%s/%s/' % (phase, study_type)
             patients = list(os.walk(BASE_DIR))[0][1] # list of patient folder names        
             for patient in tqdm(patients): # for each patient folder
                 for study in os.listdir(BASE_DIR + patient): # for each study in that patient folder
                     label = study_label[study.split('_')[1]] # get label 0 or 1
                     path = BASE_DIR + patient + '/' + study + '/' # path to this study
                     file_names = [file for file in os.listdir(path) if file.startswith('image')]
-                    study_data[phase].loc[i] = [path, len(file_names), label] # add new row
-                    i+=1
+                    for file in file_names:
+                        study_data[phase].loc[i] = [path + file, len(file_names), label] # add new row
+                        i+=1
     return study_data
 
 class ImageDataset(Dataset):
@@ -51,15 +52,12 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, idx):
         study_path = self.df.iloc[idx, 0]
-        count = self.df.iloc[idx, 1]
-        images = []
-        for i in range(count):
-            image = pil_loader(study_path + 'image%s.png' % (i+1))
-            images.append(self.transform(image))
-        images = torch.stack(images)
+        image = pil_loader(study_path)
+        if self.transform is not None:
+            image = self.transform(image)
         label = self.df.iloc[idx, 2]
-        sample = {'images': images, 'label': label}
-        return sample
+        label = torch.tensor(label)
+        return image, label
 
 def get_dataloaders(data, batch_size=8, study_level=False):
     '''
@@ -83,5 +81,5 @@ def get_dataloaders(data, batch_size=8, study_level=False):
     dataloaders = {x: DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True, num_workers=4) for x in data_cat}
     return dataloaders
 
-if __name__=='main':
+if __name__=='__main__':
     pass
